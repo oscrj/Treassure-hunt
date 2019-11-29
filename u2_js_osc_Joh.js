@@ -13,7 +13,6 @@ function init(){
 function initGameUI(){
   // Call functions that creates the Game UI
   initChests();
-  initScoreBoard(); 
   initRefreshButton();
 }
 
@@ -55,7 +54,7 @@ function chestClicked(event){
   
   if(event.target === winnerChest){
     event.target.setAttribute("src", "../images/chest-jewel.png");
-    score += 5;
+    initScoreBoard();
     removeChestEvents();
   }
   else{
@@ -88,6 +87,7 @@ function scoreElement(){
 }
 
 function initScoreBoard(){
+  score += 5;
   scoreRef.textContent = "Score: " + score;
 }
 
