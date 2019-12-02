@@ -1,5 +1,6 @@
-var score = 0;  //  Score will store the player score through out the game. Player starts with score = zero.
-var winnerChest = "";  //  The chest containing the treassure. Set too an emty sting before the chest have been created.
+let score = 0;  //  Score will store the player score through out the game. Player starts with score = zero.
+let winnerChest = "";  //  The chest containing the treassure. Set too an emty sting before the chest have been created.
+let treasurePhoto = "";
 
 /**
  * @desc - After the DOM content has loaded init(); is called. When init is called this function starts the game by calling
@@ -38,11 +39,29 @@ function initChests(){
 
 /**
  * @desc -
- * @param string msg -
+ * @param -
  * @return -
 */
+// make a request towards pexels API and get 1 Diamond image
 function getImageFromPexels(){
-  // make a request towards pexels API and get 1 Diamond image
+  var xhr = new XMLHttpRequest;
+
+  xhr.open("Get", "https://api.pexels.com/v1/search?query=treasure+query&per_page=15&page=1", true);
+
+  xhr.setRequestHeader("Authorization", "563492ad6f91700001000001a2a58a860a564047aee24d132f474993");
+
+  xhr.onload = function (){
+    let photos = JSON.parse(this.responseText);
+    let randomNumber = Math.floor(Math.random() * 15);  //  Give randomNumber a value between 0 - 14.
+    let arrTresurePhotos = photos.photos;
+
+    for(var i = 0; i < arrTresurePhotos.length; i++){
+      if(i === randomNumber){
+        treasurePhoto = arrTresurePhotos[randomNumber];
+      }
+    }
+  }
+  xhr.send();
 }
 
 /**
@@ -51,16 +70,15 @@ function getImageFromPexels(){
 */
 function placeTreassure(chestList){
   let randomNumber = Math.floor(Math.random() * 3);  //  Give randomNumber a value between 0 - 2.
-  
+  getImageFromPexels(); // 
   //  loop through chestList which is an HTMLCollection and have a syntax similar to arrays. 
   for(var i = 0;i < chestList.length; i++){
     //  If i is equal to RandomNumber give winnerChest the value of the element with the indexnumber of randomNumber.
     if(i === randomNumber){
       winnerChest = chestList[i];
-      console.log(winnerChest); // Use this while development. Remove befor going live.
+      console.log(winnerChest); // Use this while development. Remove befor going live. <---------------------------------------------------------
     }
   }
-
   initChestEventListeners();   //  call function with given parameter winnerChest with treassure.
 }
 
@@ -79,7 +97,7 @@ function initChestEventListeners() {
 function chestClicked(event){
   //  If the event thats is clicked on is equal to the element containing the treassuer.
   if(event.target === winnerChest){
-    event.target.setAttribute("src", "../images/chest-jewel.png");  //  Give the chest with the treassure a new images.
+    event.target.setAttribute("src", treasurePhoto.src.tiny);  //  Give the chest with the treassure a new random images using the API. 
     initScoreBoard();  //  Calls initScore to update the score board with 5 new points.  
     removeChestEvents();  //  call function to stop listening to click events on the chests elements.
   }
